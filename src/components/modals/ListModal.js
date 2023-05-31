@@ -1,13 +1,19 @@
-import React from "react";
+import React, { useState } from "react";
 import { Modal,Form,Button } from "semantic-ui-react";
 import {API, graphqlOperation}  from 'aws-amplify';
 import { createList, updateList } from '../../graphql/mutations';
+import UploadImage from "../HandleImages/UploadImage";
+import { useS3 } from "../../hooks/useS3";
 
 
 function ListModal({state, dispatch}){
+    const [uploadToS3] = useS3();
+    const [fileToUpload, setFileToUpload] = useState();
+
     async function saveList(){
+        const imageKey = uploadToS3(fileToUpload); 
         const {title, description} = state;
-        const result = await API.graphql(graphqlOperation(createList, {input:{title, description}}));
+        const result = await API.graphql(graphqlOperation(createList, {input:{title, description, imageKey}}));
         dispatch({type:'CLOSE_MODAL'});
         console.log('Save the data with result', result);
     }
@@ -17,6 +23,10 @@ function ListModal({state, dispatch}){
         const result = await API.graphql(graphqlOperation(updateList, {input:{id, title, description}}));
         dispatch({type:'CLOSE_MODAL'});
         console.log('edit the data with result', result);
+    }
+
+    function getSelectedFile(fileName){
+        setFileToUpload(fileName);
     }
     return(
     <Modal open={state.isModalOpen} dimmer='blurring'>
@@ -30,6 +40,7 @@ function ListModal({state, dispatch}){
                     ></Form.Input>
                     <Form.TextArea value={state.descritption} 
                     onChange={(e) =>dispatch({type:'DESCRIPTION_CHANGED', value:e.target.value})} label='Description' placeholder="things that my pretty lists is about"></Form.TextArea>
+                    <UploadImage getSelectedFile= {getSelectedFile}/>
                 </Form>
             </Modal.Content>
             <Modal.Actions>

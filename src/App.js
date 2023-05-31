@@ -1,5 +1,4 @@
 import './App.css';
-import UploadImage from './components/HandleImages/UploadImage';
 import {Amplify, API, graphqlOperation}  from 'aws-amplify';
 import awsConfig from './aws-exports';
 import {AmplifyAuthenticator, AmplifySignOut} from '@aws-amplify/ui-react-v1';
@@ -148,7 +147,6 @@ function App() {
           <MainHeader />
           <Lists lists = {lists} dispatch={dispatch}/> 
         </div> 
-        <UploadImage/>
       </Container>
       <ListModal state={state} dispatch={dispatch} />
     </AmplifyAuthenticator>

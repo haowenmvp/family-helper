@@ -7,6 +7,7 @@ export const getList = /* GraphQL */ `
       id
       title
       description
+      imageKey
       listItems {
         items {
           id
